@@ -97,6 +97,8 @@ After finishing the dataset and environment preparation, please run:
 sh train_many2.sh
 ```
 
+To reproduce the results on Cityscapes, we froze the teacher model at the 5th epoch and set the height to 192 and width to 512.
+
 ### Testing
 
 To evaluate a model on KITTI, run:
