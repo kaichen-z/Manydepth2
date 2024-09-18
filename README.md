@@ -79,7 +79,7 @@ Make sure you have first run `export_gt_depth.py` to extract ground truth files.
 
 You can also download it from this link [KITTI_GT](https://drive.google.com/file/d/19lGwLoWgWtzcd-ZCB_NK6TsJfrRU1ZPg/view?usp=drive_link), and place it under ```splits/eigen/```.
 
-For instructions on downloading the KITTI dataset, see [SfMLearner](https://github.com/tinghuiz/SfMLearner/tree/master).
+For instructions on downloading the Cityscapes dataset, see [SfMLearner](https://github.com/tinghuiz/SfMLearner/tree/master).
 
 ## 👀 Reproducing Paper Results
 
