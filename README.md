@@ -4,11 +4,11 @@
 
 We introduce ***Manydepth2***, a Motion-Guided Depth Estimation Network, to achieve precise monocular self-supervised depth estimation for both dynamic objects and static backgrounds
 
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/mgdepth-motion-guided-cost-volume-for-self/monocular-depth-estimation-on-kitti-eigen-1)](https://paperswithcode.com/sota/monocular-depth-estimation-on-kitti-eigen-1?p=mgdepth-motion-guided-cost-volume-for-self)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/mgdepth-motion-guided-cost-volume-for-self/camera-pose-estimation-on-kitti-odometry)](https://paperswithcode.com/sota/camera-pose-estimation-on-kitti-odometry?p=mgdepth-motion-guided-cost-volume-for-self)
 
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/mgdepth-motion-guided-cost-volume-for-self/monocular-depth-estimation-on-cityscapes)](https://paperswithcode.com/sota/monocular-depth-estimation-on-cityscapes?p=mgdepth-motion-guided-cost-volume-for-self)
 
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/mgdepth-motion-guided-cost-volume-for-self/camera-pose-estimation-on-kitti-odometry)](https://paperswithcode.com/sota/camera-pose-estimation-on-kitti-odometry?p=mgdepth-motion-guided-cost-volume-for-self)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/mgdepth-motion-guided-cost-volume-for-self/monocular-depth-estimation-on-kitti-eigen-1)](https://paperswithcode.com/sota/monocular-depth-estimation-on-kitti-eigen-1?p=mgdepth-motion-guided-cost-volume-for-self)
 
 * ✅ **Self-supervised**: We train from monocular video only. No depths or poses are needed at training or test time.
 * ✅ **Accurate**: Accurate depth estimation for both dynamic objects and static background.
