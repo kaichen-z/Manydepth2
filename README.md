@@ -65,7 +65,7 @@ Kaichen Zhou, Jia-Wang Bian, Qian Xie, Jian-Qing Zheng, Niki Trigoni, Andrew Mar
 
 ## 📈 Results
 
-Our **ManyDepth2** method outperforms all previous methods in all subsections across most metrics with the same input size, whether or not the baselines use multiple frames at test time. See our paper for full details.
+Our **Manydepth2** method outperforms all previous methods in all subsections across most metrics with the same input size, whether or not the baselines use multiple frames at test time. See our paper for full details.
 
 <p align="center">
   <img src="assets/demo6.png" alt="KITTI results table" width="700" />
@@ -73,11 +73,13 @@ Our **ManyDepth2** method outperforms all previous methods in all subsections ac
 
 ## 💾 Dataset Preparation
 
-For instructions on downloading the KITTI dataset, see [Monodepth2](https://github.com/nianticlabs/monodepth2)
+For instructions on downloading the KITTI dataset, see [Monodepth2](https://github.com/nianticlabs/monodepth2).
 
 Make sure you have first run `export_gt_depth.py` to extract ground truth files.
 
-You can also download it from this link [KITTI_GT](https://drive.google.com/file/d/19lGwLoWgWtzcd-ZCB_NK6TsJfrRU1ZPg/view?usp=drive_link)
+You can also download it from this link [KITTI_GT](https://drive.google.com/file/d/19lGwLoWgWtzcd-ZCB_NK6TsJfrRU1ZPg/view?usp=drive_link), and place it under ```splits/eigen/```.
+
+For instructions on downloading the KITTI dataset, see [SfMLearner](https://github.com/tinghuiz/SfMLearner/tree/master).
 
 ## 👀 Reproducing Paper Results
 
@@ -135,4 +137,4 @@ You can download the weights for several pretrained models here and save them in
 * [KITTI MR (640x192) Manydepth2](https://drive.google.com/drive/folders/1mUlairBiKRm8IWXV2O2a5_cGzQwBC3RC?usp=drive_link)
 
 ## 🖼 Acknowledgement
-Great Thank to [Manydepth](https://github.com/nianticlabs/manydepth).
+Great Thank to [GMFlow](https://github.com/haofeixu/gmflow?tab=readme-ov-file), [SfMLearner](https://github.com/tinghuiz/SfMLearner/tree/master), [Monodepth2](https://github.com/nianticlabs/monodepth2) and [Manydepth](https://github.com/nianticlabs/manydepth).
