@@ -2,6 +2,8 @@
 
 [[Link to paper]](https://arxiv.org/abs/2312.15268)
 
+This is the official implementation of Manydepth2.
+
 We introduce ***Manydepth2***, a Motion-Guided Depth Estimation Network, to achieve precise monocular self-supervised depth estimation for both dynamic objects and static backgrounds
 
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/mgdepth-motion-guided-cost-volume-for-self/camera-pose-estimation-on-kitti-odometry)](https://paperswithcode.com/sota/camera-pose-estimation-on-kitti-odometry?p=mgdepth-motion-guided-cost-volume-for-self)
