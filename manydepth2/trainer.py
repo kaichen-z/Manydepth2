@@ -28,7 +28,7 @@ def seed_worker(worker_id):
 
 class Trainer:
     def __init__(self, options):
-        logging.info('--------------------Using Trainer--------------------')
+        logging.info('--------------------Manydepth--------------------')
         self.opt = options
         self.log_path = os.path.join(self.opt.log_dir, self.opt.model_name)
         # checking height and width are multiples of 32

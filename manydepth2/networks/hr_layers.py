@@ -400,39 +400,16 @@ class Attention_Module(nn.Module):
         if output_channel is not None:
             out_channel = output_channel
         channel = in_channel
-        #self.ca = Multi_Head_Attention()
-        #self.ca = EChannelAttention(channel, ksize)
-        self.ca = ChannelAttention(channel)
-        #self.sa = SpatialAttention()
-        #self.cs = CS_Block(channel)
+        attention = True
+        if attention:
+            self.ca = ChannelAttention(channel)
+        else:
+            self.ca = nn.Conv2d(in_channels = channel, out_channels = channel, kernel_size = 3, stride = 1, padding = 1 )
         self.conv_se = nn.Conv2d(in_channels = in_channel, out_channels = out_channel, kernel_size = 3, stride = 1, padding = 1 )
         self.relu = nn.ReLU(inplace = True)
     def forward(self, high_features, low_features):
         features = [upsample(high_features)]
         features += low_features
-        features = torch.cat(features, 1)
-        features = self.ca(features)
-        return self.relu(self.conv_se(features))
-
-class Attention_Module3(nn.Module):
-    def __init__(self, high_feature_channel, low_feature_channels, output_channel = None, ksize = 3):
-        super(Attention_Module3, self).__init__()
-        in_channel = high_feature_channel + low_feature_channels
-        out_channel = high_feature_channel
-        if output_channel is not None:
-            out_channel = output_channel
-        channel = in_channel
-        #self.ca = Multi_Head_Attention()
-        #self.ca = EChannelAttention(channel, ksize)
-        self.ca = ChannelAttention(channel)
-        #self.sa = SpatialAttention()
-        #self.cs = CS_Block(channel)
-        self.conv_se = nn.Conv2d(in_channels = in_channel, out_channels = out_channel, kernel_size = 3, stride = 1, padding = 1 )
-        self.relu = nn.ReLU(inplace = True)
-    def forward(self, high_features, low_features, high_disparity):
-        features = [upsample(high_features)]
-        features += low_features
-        features += [upsample(high_disparity)]
         features = torch.cat(features, 1)
         features = self.ca(features)
         return self.relu(self.conv_se(features))

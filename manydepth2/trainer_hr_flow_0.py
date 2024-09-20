@@ -32,7 +32,7 @@ def seed_worker(worker_id):
 
 class Trainer:
     def __init__(self, options):
-        logging.info('--------------------Using Trainer Flow--------------------')
+        logging.info('--------------------Manydepth2--------------------')
         self.opt = options
         self.log_path = os.path.join(self.opt.log_dir, self.opt.model_name)
         # checking height and width are multiples of 32
@@ -66,7 +66,7 @@ class Trainer:
         logging.info('Matched Frames: {}'.format(self.matching_ids)) # Only using -1 frame to construct the cost volume.
 
         if self.opt.using_flow:
-            logging.info('--------------------Using Flow Net--------------------')
+            logging.info('--------------------Using Flow Net (Manydepth2)--------------------')
             feature_channels = 128
             num_scales = 1
             upsample_factor = 8
@@ -90,7 +90,9 @@ class Trainer:
             weights = checkpoint['model'] if 'model' in checkpoint else checkpoint
             self.model_gmflow.load_state_dict(weights)
             self.model_gmflow.eval()
-        
+        else:
+            logging.info('--------------------Not Using Flow Net (Manydepth2-NF)--------------------')
+
         self.models["encoder"] = networks.multihrnet18_flow00(
             self.opt.num_layers, 
             input_height=self.opt.height, input_width=self.opt.width,
@@ -122,6 +124,17 @@ class Trainer:
                                  num_input_features=1,
                                  num_frames_to_predict_for=2)
         self.models["pose"].to(self.device)
+        
+        total_params = []
+        total_params.append(sum(p.numel() for p in self.models["encoder"].parameters()))
+        total_params.append(sum(p.numel() for p in self.models["depth"].parameters()))
+        total_params.append(sum(p.numel() for p in self.models["mono_encoder"].parameters()))
+        total_params.append(sum(p.numel() for p in self.models["mono_depth"].parameters()))
+        total_params.append(sum(p.numel() for p in self.models["pose_encoder"].parameters()))
+        total_params.append(sum(p.numel() for p in self.models["pose"].parameters()))
+        total_params_weights  = sum(total_params)/1e6
+        logging.info(f'--------------------weights: {total_params_weights}--------------------')
+
         if self.train_teacher_and_pose:
             self.parameters_to_train += list(self.models["pose_encoder"].parameters())
             self.parameters_to_train += list(self.models["pose"].parameters())

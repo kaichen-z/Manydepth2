@@ -132,12 +132,11 @@ class HRnetEncoderMatching(nn.Module):
         check_flow = torch.norm(dynamic_flow, dim=1, keepdim=True)
         threshold = 10
         segmentation =  check_flow > threshold
-        flow_bwd = self.invert_flow(flow)
-        seg_flow_bwd = segmentation*flow_bwd
-        static_reference = self.warping(lookup_images, seg_flow_bwd)
+        flow_bwd, seg_ref = self.invert_flow(flow, segmentation)
+        static_reference = self.warping(lookup_images, current_image, flow_bwd, seg_ref)
         return static_reference
 
-    def invert_flow(self, fwd_flow):
+    def invert_flow(self, fwd_flow, segmentation):
         # Get the backward optical flow. 
         B, _, H, W = fwd_flow.shape
         grid_y, grid_x = torch.meshgrid(torch.arange(H), torch.arange(W), indexing='ij')
@@ -145,14 +144,19 @@ class HRnetEncoderMatching(nn.Module):
         grid = grid.unsqueeze(0).repeat(B, 1, 1, 1)
         coords = grid + fwd_flow  # Shape (B, 2, H, W)
         bwd_flow = torch.zeros_like(fwd_flow)
+        seg_ref = torch.zeros_like(segmentation)
         coords = torch.round(coords).long()
+        grid = grid.long()
         coords[:, 0].clamp_(0, W - 1)
         coords[:, 1].clamp_(0, H - 1)
         for b in range(B):
-            bwd_flow[b, :, coords[b, 1], coords[b, 0]] = -fwd_flow[b]
-        return bwd_flow
+            bwd_flow[b, :, coords[b, 1], coords[b, 0]] = - fwd_flow[b, :, grid[b,1], grid[b,0]]
+            seg_ref[b, :, coords[b, 1], coords[b, 0]] = segmentation[b, :, grid[b,1], grid[b,0]]
+        return bwd_flow, seg_ref
 
-    def warping(self, lookup_images, flow_bwd):
+    def warping(self, lookup_images, current_image, flow_bwd, seg_ref):
+        ref_image = F.interpolate(lookup_images[:, 0], scale_factor=1/4, mode='bilinear', align_corners=False)
+        cur_image = F.interpolate(current_image, scale_factor=1/4, mode='bilinear', align_corners=False)
         B, _, H, W = flow_bwd.shape
         grid_y, grid_x = torch.meshgrid(torch.arange(H), torch.arange(W), indexing='ij')
         grid = torch.stack((grid_x, grid_y), dim=0).float().to(flow_bwd.device)
@@ -161,8 +165,9 @@ class HRnetEncoderMatching(nn.Module):
         new_coords[:, 0, :, :] = (new_coords[:, 0, :, :] / (W - 1)) * 2 - 1
         new_coords[:, 1, :, :] = (new_coords[:, 1, :, :] / (H - 1)) * 2 - 1
         new_coords = new_coords.permute(0, 2, 3, 1)  # Shape (1, H, W, 2)
-        static_reference = F.grid_sample(lookup_images[:,0], new_coords, mode='bilinear', padding_mode='zeros', align_corners=True)
-        return static_reference
+        static_reference_dyn = F.grid_sample(cur_image, new_coords, mode='bilinear', padding_mode='zeros', align_corners=True)
+        new_static_reference = ref_image*(~seg_ref) + static_reference_dyn*seg_ref
+        return new_static_reference
 
     def compute_depth_bins(self, min_depth_bin, max_depth_bin):
         """Compute the depths bins used to build the cost volume. Bins will depend upon

@@ -94,8 +94,8 @@ conda activate manydepth2
 ```
 Next, please download and install the pretrained FlowNet weights using this [Weights For GMFLOW](https://drive.google.com/file/d/1tfHRRO-WiL7Lvva4ZCOAjSVxM4glq_ws/view?usp=drive_link). And place it under ```/pretrained```.
 
-### Training
-After finishing the dataset and environment preparation, please run:
+### Training (W Optical Flow)
+After finishing the dataset and environment preparation, you can train Manydehtp2, by running:
 
 ```bash
 sh train_many2.sh
@@ -103,12 +103,25 @@ sh train_many2.sh
 
 To reproduce the results on Cityscapes, we froze the teacher model at the 5th epoch and set the height to 192 and width to 512.
 
+### Training (W/O Optical Flow)
+To train Manydepth2-NF, please run:
+
+```bash
+sh train_many2-NF.sh
+```
+
 ### Testing
 
 To evaluate a model on KITTI, run:
 
 ```bash
 sh eval_many2.sh
+```
+
+To evaluate a model (W/O Optical Flow)
+
+```bash
+sh eval_many2-NF.sh
 ```
 
 ## 👀 Reproducing Baseline Results
@@ -131,10 +144,14 @@ You can download the weights for several pretrained models here and save them in
     --...
   --models_many2
     --...
+  --models_many2-NF
+    --...
 ```
 
 * [KITTI MR (640x192) Manydepth](https://drive.google.com/drive/folders/1WM-At9UPNs1JSyHRyV_4MBuooQki9A7H?usp=drive_link)
-* [KITTI MR (640x192) Manydepth2](https://drive.google.com/drive/folders/1mUlairBiKRm8IWXV2O2a5_cGzQwBC3RC?usp=drive_link)
+* [KITTI MR (640x192) Manydepth2](https://drive.google.com/drive/folders/1d7vywjh3DW3lkCiT7daYxruDnrWF4XF0?usp=drive_link)
+* [KITTI MR (640x192) Manydepth2-NF](https://drive.google.com/drive/folders/1QzhHFYgpPvYiAhAm4BBytYZUHV-dkeVP?usp=drive_link)
+
 
 ## 🖼 Acknowledgement
 Great Thank to [GMFlow](https://github.com/haofeixu/gmflow?tab=readme-ov-file), [SfMLearner](https://github.com/tinghuiz/SfMLearner/tree/master), [Monodepth2](https://github.com/nianticlabs/monodepth2) and [Manydepth](https://github.com/nianticlabs/manydepth).
