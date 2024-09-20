@@ -94,7 +94,7 @@ conda activate manydepth2
 ```
 Next, please download and install the pretrained FlowNet weights using this [Weights For GMFLOW](https://drive.google.com/file/d/1tfHRRO-WiL7Lvva4ZCOAjSVxM4glq_ws/view?usp=drive_link). And place it under ```/pretrained```.
 
-### Training (W Optical Flow)
+### Training Manydepth2 (W Optical Flow)
 After finishing the dataset and environment preparation, you can train Manydehtp2, by running:
 
 ```bash
@@ -103,7 +103,7 @@ sh train_many2.sh
 
 To reproduce the results on Cityscapes, we froze the teacher model at the 5th epoch and set the height to 192 and width to 512.
 
-### Training (W/O Optical Flow)
+### Training Manydepth2-NF (W/O Optical Flow)
 To train Manydepth2-NF, please run:
 
 ```bash
@@ -112,13 +112,13 @@ sh train_many2-NF.sh
 
 ### Testing
 
-To evaluate a model on KITTI, run:
+To evaluate Manydepth2 on KITTI, run:
 
 ```bash
 sh eval_many2.sh
 ```
 
-To evaluate a model (W/O Optical Flow)
+To evaluate Manydepth2-NF (W/O Optical Flow) on KITTI, run:
 
 ```bash
 sh eval_many2-NF.sh
