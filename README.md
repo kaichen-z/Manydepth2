@@ -94,7 +94,7 @@ conda activate manydepth2
 ```
 Next, please download and install the pretrained FlowNet weights using this [Weights For GMFLOW](https://drive.google.com/file/d/1tfHRRO-WiL7Lvva4ZCOAjSVxM4glq_ws/view?usp=drive_link). And place it under ```/pretrained```.
 
-### Training Manydepth2 (W Optical Flow)
+### Training Manydepth2 (W/ Optical Flow)
 After finishing the dataset and environment preparation, you can train Manydehtp2, by running:
 
 ```bash
