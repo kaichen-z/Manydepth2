@@ -132,7 +132,7 @@ class HRnetEncoderMatching(nn.Module):
         check_flow = torch.norm(dynamic_flow, dim=1, keepdim=True)
         threshold = 10
         segmentation =  check_flow > threshold
-        flow_bwd, seg_ref = self.invert_flow(flow, segmentation)
+        flow_bwd, seg_ref = self.invert_flow(normal_static_flow, segmentation)
         static_reference = self.warping(lookup_images, current_image, flow_bwd, seg_ref)
         return static_reference
 
@@ -360,16 +360,17 @@ class HRnetEncoderMatching(nn.Module):
             return x
         
     def forward(self, current_image, lookup_images, poses, flow, depth, K, invK,
-                min_depth_bin=None, max_depth_bin=None, using_flow=False):
+                min_depth_bin=None, max_depth_bin=None, using_flow=False, epoch=100):
         # feature extraction
         self.features, features, list18 = self.feature_extraction(current_image, return_all_feats=True)
         current_feats = self.features
         # B, 64, H/4, W/4
         # feature extraction on lookup images - disable gradients to save memory
         """^^^^^^^^Static Flow Extraction^^^^^^^^"""
-        if using_flow:
+        if using_flow and epoch > 5:
+            # this one is usually set as half of freeze epoch
             with torch.no_grad():
-                alpha = 0.2
+                alpha = 0.25
                 static_reference = self.compute_dynamic_flow(poses, flow, depth, K, invK, current_image, lookup_images)
                 static_reference = F.interpolate(static_reference, scale_factor=4, mode='bilinear', align_corners=False)
                 if len(lookup_images.shape) > 4:

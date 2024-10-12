@@ -386,7 +386,7 @@ class Trainer:
                     output, lowest_cost, costvol = self.models["encoder"](input_color, lookup_frames, relative_poses,
                                                         flow_preds, # B, 2, H/4, W/4
                                                         coarse_depth, # B, 1, H/4, W/4
-                                                        K, invK, min_depth_bin, max_depth_bin, self.opt.using_flow)
+                                                        K, invK, min_depth_bin, max_depth_bin, self.opt.using_flow, self.epoch)
                     output = self.models["depth"](output)
                 pred_disp, _ = disp_to_depth(output[("disp", 0)], self.opt.min_depth, self.opt.max_depth)
                 pred_disp = pred_disp.cpu()[:, 0].numpy()
@@ -597,7 +597,8 @@ class Trainer:
                                                                         inputs[('inv_K', 2)], # 1/4 Resolution
                                                                         min_depth_bin=min_depth_bin,
                                                                         max_depth_bin=max_depth_bin,
-                                                                        using_flow=self.opt.using_flow)
+                                                                        using_flow=self.opt.using_flow, 
+                                                                        epoch=self.epoch)
         outputs.update(self.models["depth"](features))
         outputs["lowest_cost"] = F.interpolate(lowest_cost.unsqueeze(1),
                                                [self.opt.height, self.opt.width],

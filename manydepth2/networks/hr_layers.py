@@ -8,10 +8,30 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+class NonLocalBlock(nn.Module):
+    def __init__(self, in_channels):
+        super(NonLocalBlock, self).__init__()
+        self.in_channels = in_channels
+        self.inter_channels = in_channels // 2
+        self.theta = nn.Conv2d(in_channels, self.inter_channels, kernel_size=1)
+        self.phi = nn.Conv2d(in_channels, self.inter_channels, kernel_size=1)
+        self.g = nn.Conv2d(in_channels, self.inter_channels, kernel_size=1)
+        self.fc = nn.Conv2d(self.inter_channels, in_channels, kernel_size=1)
+    def forward(self, x):
+        batch_size, C, H, W = x.size()
+        theta_x = self.theta(x).view(batch_size, self.inter_channels, -1)  # (B, C', H*W)
+        phi_x = self.phi(x).view(batch_size, self.inter_channels, -1)      # (B, C', H*W)
+        g_x = self.g(x).view(batch_size, self.inter_channels, -1)          # (B, C', H*W)
+        theta_phi = torch.matmul(theta_x.permute(0, 2, 1), phi_x)        # (B, H*W, H*W)
+        attention = F.softmax(theta_phi, dim=-1)                           # Apply softmax
+        weighted_g = torch.matmul(attention, g_x.permute(0, 2, 1))        # (B, H*W, C')
+        weighted_g = weighted_g.permute(0, 2, 1).view(batch_size, self.inter_channels, H, W)  # (B, C', H, W)
+        output = self.fc(weighted_g)
+        return output + x 
+
 def visual_feature(features,stage):
     feature_map = features.squeeze(0).cpu()
     n,h,w = feature_map.size()
-    print(h,w)
     list_mean = []
     #sum_feature_map = torch.sum(feature_map,0)
     sum_feature_map,_ = torch.max(feature_map,0)
@@ -337,7 +357,6 @@ class ChannelAttention(nn.Module):
         avg_out = self.fc(self.avg_pool(x).view(b,c)).view(b, c, 1, 1)
         out = avg_out
         return self.sigmoid(out).expand_as(in_feature) * in_feature
-## SpatialAttetion
 
 class SpatialAttention(nn.Module):
     def __init__(self, kernel_size=7):
@@ -408,6 +427,60 @@ class Attention_Module(nn.Module):
         self.conv_se = nn.Conv2d(in_channels = in_channel, out_channels = out_channel, kernel_size = 3, stride = 1, padding = 1 )
         self.relu = nn.ReLU(inplace = True)
     def forward(self, high_features, low_features):
+        features = [upsample(high_features)]
+        features += low_features
+        features = torch.cat(features, 1)
+        features = self.ca(features)
+        return self.relu(self.conv_se(features))
+
+class EfficientNonLocalAttention(nn.Module):
+    def __init__(self, in_channels, reduction_hw=2, reduction_ch=16):
+        super(EfficientNonLocalAttention, self).__init__()
+        self.in_channels = in_channels
+        self.inter_channels = in_channels // reduction_ch  # Reduce the channel dimension to save computation
+        self.query_conv = nn.Conv2d(in_channels, self.inter_channels, kernel_size=1)
+        self.key_conv = nn.Conv2d(in_channels, self.inter_channels, kernel_size=1)
+        self.value_conv = nn.Conv2d(in_channels, self.inter_channels, kernel_size=1)
+        self.out_conv = nn.Conv2d(self.inter_channels, in_channels, kernel_size=1)
+        self.gamma = nn.Parameter(torch.zeros(1))
+        self.pool = nn.MaxPool2d(reduction_hw)  # Halves the height and width
+    def forward(self, X):
+        B, C, H, W = X.shape
+        N = H * W
+        X_downsampled = self.pool(X)
+        B, C, H_ds, W_ds = X_downsampled.shape
+        N_ds = H_ds * W_ds
+        Q = self.query_conv(X_downsampled).view(B, self.inter_channels, N_ds)
+        K = self.key_conv(X_downsampled).view(B, self.inter_channels, N_ds)
+        V = self.value_conv(X_downsampled).view(B, self.inter_channels, N_ds)
+        attention = torch.bmm(Q.permute(0, 2, 1), K)  # (B, H_ds*W_ds, H_ds*W_ds)
+        attention = F.softmax(attention, dim=-1)      # Normalize attention map
+        out = torch.bmm(V, attention)  # (B, inter_channels, H_ds*W_ds)
+        out = out.view(B, self.inter_channels, H_ds, W_ds)  # Reshape to (B, inter_channels, H_ds, W_ds)
+        out = self.out_conv(out)
+        out = F.interpolate(out, size=(H, W), mode='bilinear', align_corners=False)
+        out = self.gamma * out + X
+        return out
+
+class Attention_Module_Non_Local(nn.Module):
+    def __init__(self, high_feature_channel, low_feature_channels, output_channel = None, ksize = 3):
+        super(Attention_Module_Non_Local, self).__init__()
+        in_channel = high_feature_channel + low_feature_channels
+        out_channel = high_feature_channel
+        if output_channel is not None:
+            out_channel = output_channel
+        channel = in_channel
+        attention = True
+        if attention:
+            self.ca = ChannelAttention(channel)
+        else:
+            self.ca = nn.Conv2d(in_channels = channel, out_channels = channel, kernel_size = 3, stride = 1, padding = 1 )
+        self.conv_se = nn.Conv2d(in_channels = in_channel, out_channels = out_channel, kernel_size = 3, stride = 1, padding = 1 )
+        self.relu = nn.ReLU(inplace = True)
+        self.EfficientNonLocalAttention = EfficientNonLocalAttention(in_channels = high_feature_channel, reduction_hw=2, reduction_ch=16)
+    def forward(self, high_features, low_features):
+        #print(high_features.size(), '---------------1')
+        high_features = self.EfficientNonLocalAttention(high_features)
         features = [upsample(high_features)]
         features += low_features
         features = torch.cat(features, 1)
