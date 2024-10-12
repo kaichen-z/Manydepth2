@@ -149,7 +149,7 @@ You can download the weights for several pretrained models here and save them in
 ```
 
 * [KITTI MR (640x192) Manydepth](https://drive.google.com/drive/folders/1WM-At9UPNs1JSyHRyV_4MBuooQki9A7H?usp=drive_link)
-* [KITTI MR (640x192) Manydepth2](https://drive.google.com/drive/folders/1mUlairBiKRm8IWXV2O2a5_cGzQwBC3RC?usp=drive_link)
+* [KITTI MR (640x192) Manydepth2](https://drive.google.com/drive/folders/1d7vywjh3DW3lkCiT7daYxruDnrWF4XF0?usp=drive_link)
 
 ## 🖼 Acknowledgement
 Great Thank to [GMFlow](https://github.com/haofeixu/gmflow?tab=readme-ov-file), [SfMLearner](https://github.com/tinghuiz/SfMLearner/tree/master), [Monodepth2](https://github.com/nianticlabs/monodepth2) and [Manydepth](https://github.com/nianticlabs/manydepth).
