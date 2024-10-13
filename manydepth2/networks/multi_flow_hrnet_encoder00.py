@@ -112,7 +112,6 @@ class HRnetEncoderMatching(nn.Module):
                                               kernel_size=1, stride=1, padding=0),
                                               nn.ReLU(inplace=True))
         """^^^^^^^^^^^^^^^^^fusion module^^^^^^^^^^^^^^^^^"""
-        #self.multi_kernel_attention = Multi_Head_Attention()
         self.reduce_conv = nn.Sequential(nn.Conv2d(bottom + self.num_depth_bins,
                                                    out_channels=bottom,
                                                    kernel_size=3, stride=1, padding=1),

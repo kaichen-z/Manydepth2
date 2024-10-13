@@ -21,21 +21,14 @@ class HRDepthDecoder(nn.Module):
         ksize = [7, 5, 5, 3]
         self.convs["up_x9_0"] = ConvBlock(self.num_ch_dec[1],self.num_ch_dec[0])
         self.convs["up_x9_1"] = ConvBlock(self.num_ch_dec[0],self.num_ch_dec[0])
-        manydepth2 = True
-        if manydepth2:
-            self.convs["72"] = Attention_Module_Non_Local(self.num_ch_enc[4], self.num_ch_enc[3] * 2, 256, ksize[0])
-            # [12, 144, 6, 20]
-            self.convs["36"] = Attention_Module_Non_Local(256, self.num_ch_enc[2] * 3, 128, ksize[1])
-            # [12, 256, 12, 40]
-            self.convs["18"] = Attention_Module_Non_Local(128, self.num_ch_enc[1] * 3 + 64 , 64, ksize[2])
-            # [12, 128, 24, 80]
-            self.convs["9"] = Attention_Module_Non_Local(64, 64, 32, ksize[3])
-            # [12, 64, 48, 160]
-        else:
-            self.convs["72"] = Attention_Module(self.num_ch_enc[4], self.num_ch_enc[3] * 2, 256, ksize[0])
-            self.convs["36"] = Attention_Module(256, self.num_ch_enc[2] * 3, 128, ksize[1])
-            self.convs["18"] = Attention_Module(128, self.num_ch_enc[1] * 3 + 64 , 64, ksize[2])
-            self.convs["9"] = Attention_Module(64, 64, 32, ksize[3])   
+        self.convs["72"] = Attention_Module_Non_Local(self.num_ch_enc[4], self.num_ch_enc[3] * 2, 256, ksize[0])
+        # [12, 144, 6, 20]
+        self.convs["36"] = Attention_Module_Non_Local(256, self.num_ch_enc[2] * 3, 128, ksize[1])
+        # [12, 256, 12, 40]
+        self.convs["18"] = Attention_Module_Non_Local(128, self.num_ch_enc[1] * 3 + 64 , 64, ksize[2])
+        # [12, 128, 24, 80]
+        self.convs["9"] = Attention_Module_Non_Local(64, 64, 32, ksize[3])
+        # [12, 64, 48, 160]
         for i in range(4):
             self.convs["dispConvScale{}".format(i)] = Conv3x3(self.num_ch_dec[i], self.num_output_channels)
         self.decoder = nn.ModuleList(list(self.convs.values()))
