@@ -12,10 +12,12 @@ We introduce ***Manydepth2***, a Motion-Guided Depth Estimation Network, to achi
 
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/mgdepth-motion-guided-cost-volume-for-self/monocular-depth-estimation-on-kitti-eigen-1)](https://paperswithcode.com/sota/monocular-depth-estimation-on-kitti-eigen-1?p=mgdepth-motion-guided-cost-volume-for-self)
 
-* ✅ **Self-supervised**: We train from monocular video only. No depths or poses are needed at training or test time.
+* ✅ **Self-supervised**: Training from monocular video. No depths or poses are needed at training or test time.
 * ✅ **Accurate**: Accurate depth estimation for both dynamic objects and static background.
 * ✅ **Efficient**: Only one forward pass at test time. No test-time optimization needed.
-* ✅ **State-of-the-art** Self-supervised monocular-trained depth estimation on KITTI.
+* ✅ **State-of-the-art**: Self-supervised monocular-trained depth estimation on KITTI.
+* ✅ **Easy to implement**: No need to pre-compute any information.
+* ✅ **Multiple-Choice**: Offer both the motion-aware and standard versions, as both perform effectively.
 
 ## Overview
 
@@ -36,7 +38,7 @@ In our paper, we:
 
 * Propose a method to construct a static reference frame using optical flow to mitigate the impact of dynamic objects.
 * Build a motion-aware cost volume leveraging the static reference frame.
-* Integrate High-Resolution Representation Learning into the framework to enhance performance further.
+* Integrate both channel attention and non-local attention into the framework to enhance performance further.
 
 Our contributions enable accurate depth estimation on both the KITTI and Cityscapes datasets:
 
