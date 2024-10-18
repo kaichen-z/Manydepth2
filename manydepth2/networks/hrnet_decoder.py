@@ -50,7 +50,7 @@ class HRDepthDecoder(nn.Module):
         outputs[("disp",1)] = self.sigmoid(self.convs["dispConvScale1"](x9))
         x6 = self.convs["up_x9_1"](upsample(self.convs["up_x9_0"](x9)))
         outputs[("disp",0)] = self.sigmoid(self.convs["dispConvScale0"](x6))
-        pdb.set_trace()
+        #pdb.set_trace()
         return outputs
 
 def sum_params(model):
